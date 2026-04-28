@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Schoolbell&family=Coming+Soon&family=Special+Elite&family=Inter:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-handwritten: "Schoolbell", cursive;
+  --font-marker: "Coming Soon", cursive;
+  --font-typewriter: "Special Elite", monospace;
+
+  --color-paper: #f4f1ea;
+  --color-ink: #1a1a1a;
+  --color-rage: #c2410c;
+  --color-emotions: #a855f7;
+  --color-identity: #0891b2;
+  --color-society: #4d7c0f;
+  --color-mind: #475569;
+}
+
+@layer base {
+  body {
+    @apply bg-paper text-ink font-sans selection:bg-yellow-300;
+    background-image: 
+      linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+}
+
+@layer components {
+  .notebook-page {
+    @apply relative bg-white shadow-xl border border-gray-200 p-8 md:p-12;
+    background-image: repeating-linear-gradient(white, white 31px, #e5e7eb 31px, #e5e7eb 32px);
+  }
+
+  .notebook-margin {
+    @apply absolute left-0 top-0 bottom-0 w-[40px] border-r-2 border-red-200;
+  }
+
+  .scribble-box {
+    @apply relative p-4 border-2 border-dashed border-ink rounded-lg;
+    transform: rotate(-0.5deg);
+  }
+
+  .highlight-yellow {
+    @apply relative inline-block;
+  }
+  .highlight-yellow::after {
+    content: '';
+    @apply absolute inset-0 bg-yellow-200/60 -z-10 -rotate-1 scale-x-105;
+  }
+
+  .btn-scribble {
+    @apply px-6 py-2 border-2 border-ink rounded-full font-marker hover:bg-ink hover:text-paper transition-all active:scale-95;
+    box-shadow: 2px 2px 0px rgba(0,0,0,1);
+  }
+
+  .btn-scribble:active {
+    box-shadow: 0px 0px 0px rgba(0,0,0,1);
+    transform: translate(2px, 2px);
+  }
+}
+
+/* Grainy overlay */
+.noise::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.05;
+  background-image: url('data:image/svg+xml,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)"/></svg>');
+}
+
