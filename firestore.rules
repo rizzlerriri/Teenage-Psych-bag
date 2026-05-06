@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 0.3 Helpers
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { return isSignedIn() && request.auth.token.email in ['mayarawat8624@gmail.com', 'rawatritishka@gmail.com'] && request.auth.token.email_verified == true; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    // Validation Helpers
+    function isValidAboutMe(data) {
+      return data.keys().hasAll(['content', 'updatedAt']) &&
+             data.keys().size() == 2 &&
+             data.content is string && data.content.size() <= 50000 &&
+             data.updatedAt == request.time;
+    }
+
+    function isValidPost(data) {
+      return data.keys().hasAll(['title', 'content', 'createdAt', 'updatedAt', 'authorId', 'isPublished']) &&
+             data.title is string && data.title.size() <= 150 &&
+             data.content is string && data.content.size() <= 20000 &&
+             data.createdAt == request.time &&
+             data.updatedAt == request.time &&
+             data.authorId is string && data.authorId == request.auth.uid &&
+             data.isPublished is bool &&
+             data.get('category', '') is string && data.get('category', '').size() <= 100 &&
+             data.get('mood', '') is string && data.get('mood', '').size() <= 100 &&
+             data.get('excerpt', '') is string && data.get('excerpt', '').size() <= 300 &&
+             data.get('readTime', '') is string && data.get('readTime', '').size() <= 20 &&
+             (data.get('publishedAt', request.time) == request.time || data.get('publishedAt', 0) is number);
+    }
+
+    function isValidPostUpdate(data) {
+      return data.title is string && data.title.size() <= 150 &&
+             data.content is string && data.content.size() <= 20000 &&
+             data.updatedAt == request.time &&
+             data.authorId is string && data.authorId == existing().authorId &&
+             data.isPublished is bool &&
+             data.get('category', '') is string && data.get('category', '').size() <= 100 &&
+             data.get('mood', '') is string && data.get('mood', '').size() <= 100 &&
+             data.get('excerpt', '') is string && data.get('excerpt', '').size() <= 300 &&
+             data.get('readTime', '') is string && data.get('readTime', '').size() <= 20 &&
+             (data.get('publishedAt', request.time) == request.time || data.get('publishedAt', 0) is number);
+    }
+
+    function isValidComment(data) {
+      return data.keys().hasAll(['postId', 'content', 'authorAlias', 'createdAt', 'deleted']) &&
+             data.keys().size() == 5 &&
+             data.postId is string && data.postId.size() <= 128 &&
+             data.content is string && data.content.size() > 0 && data.content.size() <= 500 &&
+             data.authorAlias is string && data.authorAlias.size() <= 50 &&
+             data.createdAt == request.time &&
+             data.deleted == false;
+    }
+
+    function isValidThought(data) {
+      return data.keys().hasAll(['content', 'color', 'createdAt', 'authorId']) &&
+             data.keys().size() == 4 &&
+             data.content is string && data.content.size() <= 100 &&
+             data.color is string && data.color.size() <= 30 &&
+             data.createdAt == request.time &&
+             data.authorId == request.auth.uid;
+    }
+
+    // Collections
+    match /settings/{settingId} {
+      allow read: if isValidId(settingId);
+      allow create, update: if isValidId(settingId) && settingId == 'about_me' && isAdmin() && isValidAboutMe(incoming());
+      allow delete: if false; // no delete allowed
+    }
+
+    match /posts/{postId} {
+      allow get: if isValidId(postId) && (isAdmin() || resource.data.isPublished == true);
+      allow list: if isAdmin() || resource.data.isPublished == true;
+      allow create: if isValidId(postId) && isAdmin() && isValidPost(incoming());
+      allow update: if isValidId(postId) && isAdmin() && isValidPostUpdate(incoming());
+      allow delete: if isValidId(postId) && isAdmin();
+    }
+
+    match /comments/{commentId} {
+      allow get: if isValidId(commentId);
+      allow list: if true;
+      allow create: if isValidId(commentId) && isValidComment(incoming());
+      // No updates to comments allowed
+      allow delete: if isValidId(commentId) && isAdmin();
+    }
+
+    match /thoughts/{thoughtId} {
+      allow read: if isValidId(thoughtId);
+      allow create: if isValidId(thoughtId) && isAdmin() && isValidThought(incoming());
+      // thoughts are not really updated, just deleted and added
+      allow delete: if isValidId(thoughtId) && isAdmin();
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "entities": {
+    "Post": {
+      "title": "Post",
+      "description": "A teenage diary entry.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "The post title", "maxLength": 150 },
+        "excerpt": { "type": "string", "description": "Short excerpt for the post list", "maxLength": 300 },
+        "content": { "type": "string", "description": "Markdown body content", "maxLength": 20000 },
+        "category": { "type": "string", "description": "Post category" },
+        "mood": { "type": "string", "description": "Current mood tag" },
+        "readTime": { "type": "string", "description": "Reading time estimate, e.g., '3 min'" },
+        "publishedAt": { "type": "number", "description": "Timestamp of post publication", "format": "timestamp" },
+        "createdAt": { "type": "number", "description": "Timestamp", "format": "timestamp" },
+        "updatedAt": { "type": "number", "description": "Timestamp", "format": "timestamp" },
+        "isPublished": { "type": "boolean", "description": "Whether the post is active" },
+        "authorId": { "type": "string", "description": "Admin UID" }
+      },
+      "required": ["title", "content", "createdAt", "updatedAt", "authorId", "isPublished"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "Anonymous comment on a post.",
+      "type": "object",
+      "properties": {
+        "postId": { "type": "string", "description": "ID of post" },
+        "content": { "type": "string", "description": "Comment content", "maxLength": 500 },
+        "authorAlias": { "type": "string", "description": "Anonymous alias", "maxLength": 50 },
+        "createdAt": { "type": "number", "format": "timestamp" },
+        "deleted": { "type": "boolean" }
+      },
+      "required": ["postId", "content", "authorAlias", "createdAt", "deleted"]
+    },
+    "Thought": {
+      "title": "Random Thought",
+      "description": "Sticky notes in mixed pastel colors.",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string", "description": "Short thought", "maxLength": 100 },
+        "color": { "type": "string", "description": "Color name or hex" },
+        "createdAt": { "type": "number", "format": "timestamp" },
+        "authorId": { "type": "string" }
+      },
+      "required": ["content", "color", "createdAt", "authorId"]
+    },
+    "AboutMe": {
+      "title": "About Me",
+      "description": "Content for the about me page.",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string", "description": "Markdown body content", "maxLength": 50000 },
+        "updatedAt": { "type": "number", "format": "timestamp" }
+      },
+      "required": ["content", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "settings": {
+      "schema": { "$ref": "#/entities/AboutMe" },
+      "description": "Global settings like about_me"
+    },
+    "posts": {
+      "schema": { "$ref": "#/entities/Post" },
+      "description": "Main diary entries"
+    },
+    "comments": {
+      "schema": { "$ref": "#/entities/Comment" },
+      "description": "Anonymous comments, global collection queried by postId"
+    },
+    "thoughts": {
+      "schema": { "$ref": "#/entities/Thought" },
+      "description": "Random thought sticky notes"
+    }
+  }
+}
