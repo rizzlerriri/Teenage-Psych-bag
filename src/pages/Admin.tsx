@@ -11,7 +11,7 @@ const ADMIN_EMAILS = ['mayarawat8624@gmail.com', 'rawatritishka@gmail.com'];
 export default function Admin() {
   const [user, setUser] = useState<any>(null);
   const [loadingConfig, setLoadingConfig] = useState(true);
-  const [activeTab, setActiveTab] = useState<'post' | 'about' | 'interactions'>('post');
+  const [activeTab, setActiveTab] = useState<'post' | 'about' | 'quote' | 'interactions'>('post');
 
   // Post form states
   const [title, setTitle] = useState('');
@@ -29,6 +29,11 @@ export default function Admin() {
   // Interactions state
   const [comments, setComments] = useState<any[]>([]);
   const [loadingComments, setLoadingComments] = useState(false);
+
+  // Quote form states
+  const [quoteText, setQuoteText] = useState('');
+  const [quoteAuthor, setQuoteAuthor] = useState('');
+  const [loadingQuote, setLoadingQuote] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
@@ -58,6 +63,22 @@ export default function Admin() {
           }
         };
         fetchAbout();
+      } else if (activeTab === 'quote') {
+        const fetchQuote = async () => {
+          setLoadingQuote(true);
+          try {
+            const docSnap = await getDoc(doc(db, 'settings', 'quote_of_the_day'));
+            if (docSnap.exists() && docSnap.data()) {
+              setQuoteText(docSnap.data().text || '');
+              setQuoteAuthor(docSnap.data().author || '');
+            }
+          } catch (error) {
+            handleFirestoreError(error, OperationType.GET, 'settings/quote_of_the_day');
+          } finally {
+            setLoadingQuote(false);
+          }
+        };
+        fetchQuote();
       } else if (activeTab === 'interactions') {
         const fetchComments = async () => {
           setLoadingComments(true);
@@ -135,6 +156,27 @@ export default function Admin() {
     }
   };
 
+  const handleQuoteSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    
+    setSubmitting(true);
+    setMessage('');
+    try {
+      await setDoc(doc(db, 'settings', 'quote_of_the_day'), {
+        text: quoteText,
+        author: quoteAuthor,
+        updatedAt: serverTimestamp()
+      });
+      setMessage('Quote of the Day updated!');
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, 'settings/quote_of_the_day');
+      setMessage('Error updating Quote of the Day.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (loadingConfig) return <div className="text-center py-20 font-typewriter">Hold on...</div>;
 
   if (!user || !ADMIN_EMAILS.includes(user.email)) {
@@ -177,6 +219,12 @@ export default function Admin() {
           className={`font-typewriter px-4 py-2 border-2 border-black ${activeTab === 'about' ? 'bg-black text-white' : 'bg-white hover:bg-gray-100'}`}
         >
           Edit About Me
+        </button>
+        <button 
+          onClick={() => setActiveTab('quote')}
+          className={`font-typewriter px-4 py-2 border-2 border-black ${activeTab === 'quote' ? 'bg-black text-white' : 'bg-white hover:bg-gray-100'}`}
+        >
+          Quote of the Day
         </button>
         <button 
           onClick={() => setActiveTab('interactions')}
@@ -262,6 +310,42 @@ export default function Admin() {
               >
                 {submitting ? 'Saving...' : 'Save About Me'}
               </button>
+            </>
+          )}
+        </form>
+      ) : activeTab === 'quote' ? (
+        <form onSubmit={handleQuoteSubmit} className="space-y-6 bg-white p-8 border border-gray-300 shadow-md">
+          {loadingQuote ? (
+            <p className="font-typewriter">Loading current quote...</p>
+          ) : (
+            <>
+               <div>
+                  <label className="block font-typewriter mb-2">Quote Text</label>
+                  <textarea 
+                    value={quoteText} 
+                    onChange={e=>setQuoteText(e.target.value)} 
+                    required 
+                    className="w-full border p-4 font-kalam h-32 text-xl"
+                    placeholder="We are all in the gutter..."
+                  />
+               </div>
+               <div>
+                  <label className="block font-typewriter mb-2">Author</label>
+                  <input 
+                    type="text"
+                    value={quoteAuthor} 
+                    onChange={e=>setQuoteAuthor(e.target.value)} 
+                    className="w-full border p-2 font-sans"
+                    placeholder="Oscar Wilde"
+                  />
+               </div>
+               <button 
+                 type="submit" 
+                 disabled={submitting}
+                 className="bg-black text-white px-8 py-3 font-marker hover:bg-electric-blue transition-colors disabled:opacity-50"
+               >
+                 {submitting ? 'Saving...' : 'Save Quote'}
+               </button>
             </>
           )}
         </form>

@@ -71,14 +71,14 @@ export default function About() {
           <div className="absolute -right-4 bottom-40 w-16 h-16 rounded-full border-2 border-dashed border-electric-blue opacity-50 z-0" />
 
           {aboutContent ? (
-            <div className="relative z-10 prose prose-lg prose-headings:font-kalam prose-headings:text-3xl prose-headings:text-purple-pen prose-h2:border-b-2 prose-h2:border-bubblegum prose-h2:inline-block prose-h2:border-dashed prose-p:font-serif prose-p:text-gray-800 prose-p:leading-relaxed max-w-none">
+            <div className="relative z-10 prose prose-lg prose-headings:font-kalam prose-headings:text-3xl prose-headings:text-purple-pen prose-h2:border-b-2 prose-h2:border-bubblegum prose-h2:inline-block prose-h2:border-dashed prose-p:font-kalam prose-p:text-xl prose-p:text-gray-800 prose-p:leading-relaxed prose-li:font-kalam prose-li:text-xl prose-li:text-gray-800 max-w-none">
               <Markdown remarkPlugins={[remarkGfm]}>{aboutContent}</Markdown>
             </div>
           ) : (
             <>
               <section className="relative z-10">
                 <h2 className="font-kalam font-bold text-3xl mb-4 text-purple-pen border-b-2 border-bubblegum inline-block border-dashed">why this blog exists</h2>
-                <div className="font-serif text-lg leading-relaxed text-gray-800 space-y-4">
+                <div className="font-sans text-lg leading-relaxed text-gray-800 space-y-4">
                   <p>
                     I was born in 2011. The iPad generation. The social media experimental subjects.
                     But I don't fit the mold. I hate TikTok dances, I overanalyze group chats, and I read Carl Jung at 2 AM while listening to early 2000s pop punk.
@@ -91,7 +91,7 @@ export default function About() {
 
               <section className="relative z-10">
                 <h2 className="font-kalam font-bold text-3xl mb-4 text-electric-blue border-b-2 border-chalk-yellow inline-block">why "teenage psychbag"?</h2>
-                <div className="font-serif text-lg leading-relaxed text-gray-800 space-y-4">
+                <div className="font-sans text-lg leading-relaxed text-gray-800 space-y-4">
                   <p>
                     Half "psychology nerd", half "teenage dirtbag". I'm trying to figure out how the human mind works, while my own mind is an absolute chaotic mess.
                   </p>

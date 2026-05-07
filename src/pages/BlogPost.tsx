@@ -150,7 +150,7 @@ export default function BlogPost() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="prose prose-lg prose-headings:font-marker prose-h2:text-3xl prose-h3:text-2xl prose-p:font-serif prose-p:text-gray-800 prose-p:leading-loose prose-a:text-electric-blue prose-a:decoration-wavy max-w-none"
+            className="prose prose-lg prose-headings:font-marker prose-h2:text-3xl prose-h3:text-2xl prose-p:font-kalam prose-p:text-xl prose-p:text-gray-800 prose-p:leading-relaxed prose-li:font-kalam prose-li:text-xl prose-li:text-gray-800 prose-a:text-electric-blue prose-a:decoration-wavy max-w-none"
           >
             <Markdown remarkPlugins={[remarkGfm]}>{post.content}</Markdown>
           </motion.div>
@@ -170,7 +170,7 @@ export default function BlogPost() {
                  <span className="font-bold text-black">{comment.authorAlias}</span>
                  {comment.createdAt && <span>{format(formatFirestoreTime(comment.createdAt), 'MMM d, yyyy h:mm a')}</span>}
                </div>
-               <p className="font-serif">{comment.content}</p>
+               <p className="font-sans text-lg">{comment.content}</p>
              </div>
           ))}
         </div>

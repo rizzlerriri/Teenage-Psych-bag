@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import RansomTitle from '../components/RansomTitle';
 import { Link } from 'react-router-dom';
-import { collection, query, where, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, orderBy, limit, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { format } from 'date-fns';
 import { formatFirestoreTime } from '../lib/utils';
@@ -18,8 +18,22 @@ interface Post {
 
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [quote, setQuote] = useState<{text: string, author: string} | null>(null);
 
   useEffect(() => {
+    const fetchQuote = async () => {
+      try {
+        const docRef = doc(db, 'settings', 'quote_of_the_day');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && docSnap.data().text) {
+          setQuote({ text: docSnap.data().text, author: docSnap.data().author });
+        }
+      } catch (err) {
+        console.error('Error fetching quote of the day', err);
+      }
+    };
+    fetchQuote();
+
     const q = query(
       collection(db, 'posts'),
       where('isPublished', '==', true),
@@ -124,9 +138,9 @@ export default function Home() {
             </div>
             <h3 className="font-marker text-xl mb-4 text-center mt-2">Quote of the Day</h3>
             <p className="font-kalam text-xl leading-relaxed text-center">
-              "We are all in the gutter, but some of us are looking at the stars."
+              "{quote?.text || 'We are all in the gutter, but some of us are looking at the stars.'}"
             </p>
-            <p className="text-right font-typewriter text-sm mt-4 opacity-70">- Oscar Wilde / Me</p>
+            <p className="text-right font-typewriter text-sm mt-4 opacity-70">- {quote?.author || 'Oscar Wilde / Me'}</p>
           </div>
 
           {/* Random Thoughts Wall (Sticky notes) */}
