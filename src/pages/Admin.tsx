@@ -11,7 +11,7 @@ const ADMIN_EMAILS = ['mayarawat8624@gmail.com', 'rawatritishka@gmail.com'];
 export default function Admin() {
   const [user, setUser] = useState<any>(null);
   const [loadingConfig, setLoadingConfig] = useState(true);
-  const [activeTab, setActiveTab] = useState<'post' | 'about' | 'quote' | 'interactions'>('post');
+  const [activeTab, setActiveTab] = useState<'post' | 'about' | 'quote' | 'interactions' | 'brand'>('post');
 
   // Post form states
   const [title, setTitle] = useState('');
@@ -232,6 +232,12 @@ export default function Admin() {
         >
           Interactions
         </button>
+        <button 
+          onClick={() => setActiveTab('brand')}
+          className={`font-typewriter px-4 py-2 border-2 border-black ${activeTab === 'brand' ? 'bg-black text-white' : 'bg-white hover:bg-gray-100'}`}
+        >
+          Brand Assets
+        </button>
       </div>
 
       {message && (
@@ -373,6 +379,40 @@ export default function Admin() {
               </div>
             ))
           )}
+        </div>
+      ) : activeTab === 'brand' ? (
+        <div className="space-y-6 bg-white p-8 border border-gray-300 shadow-md">
+          <h2 className="font-marker text-2xl">Download Logo</h2>
+          <p className="font-typewriter text-gray-700">Use this tool to generate and download the logo as a transparent image for social media and posts.</p>
+          
+          <div className="bg-gray-100 border-2 border-dashed border-gray-300 p-8 flex flex-col items-center gap-8 overflow-hidden relative">
+            <div id="logo-export-area" className="p-12 flex justify-center items-center bg-transparent w-full">
+              <RansomTitle text={"teenage\npsychbag"} size="xl" />
+            </div>
+            
+            <button 
+              onClick={() => {
+                const node = document.getElementById('logo-export-area');
+                if (node) {
+                  import('html-to-image').then(({ toPng }) => {
+                    toPng(node, { cacheBust: true, backgroundColor: 'transparent' })
+                      .then((dataUrl) => {
+                        const link = document.createElement('a');
+                        link.download = 'teenage-psychbag-logo.png';
+                        link.href = dataUrl;
+                        link.click();
+                      })
+                      .catch((err) => {
+                        console.error('Oops, something went wrong!', err);
+                      });
+                  });
+                }
+              }}
+              className="mt-6 bg-electric-blue text-white px-8 py-4 font-marker shadow-[6px_6px_0_0_#000] hover:-translate-y-1 hover:shadow-[8px_8px_0_0_#000] transition-all text-xl"
+            >
+              Download Transparent PNG
+            </button>
+          </div>
         </div>
       ) : null}
     </div>

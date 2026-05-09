@@ -71,8 +71,8 @@ export default function Blog() {
 
   return (
     <div className="max-w-4xl mx-auto py-8">
-      <div className="text-center mb-8">
-         <RansomTitle text="The Diary" size="lg" className="mb-4" />
+      <div className="text-center mb-12 relative">
+         <h1 className="font-editors-note italic text-yellow-400 text-4xl md:text-6xl drop-shadow-[0_0_15px_rgba(250,204,21,0.6)]">The Diary</h1>
       </div>
 
       {/* Search Bar */}
@@ -85,20 +85,20 @@ export default function Blog() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by title, excerpt, or content..."
-          className="w-full pl-12 pr-4 py-3 font-typewriter border-2 border-black focus:outline-none focus:ring-2 focus:ring-electric-blue transition-shadow shadow-[4px_4px_0_0_#000] focus:shadow-none bg-white"
+          className="w-full pl-12 pr-4 py-3 font-typewriter border border-white/20 focus:outline-none focus:border-yellow-400 transition-colors bg-black/40 backdrop-blur-sm text-yellow-100 placeholder-white/30"
         />
       </div>
 
       {/* Filters */}
-      <div className="mb-12 flex flex-wrap gap-2 justify-center">
+      <div className="mb-16 flex flex-wrap gap-2 justify-center">
         {CATEGORIES.map(cat => (
           <button
             key={cat}
             onClick={() => setSearchParams(cat === 'All' ? {} : { category: cat })}
-            className={`font-typewriter text-sm px-4 py-2 border-2 border-black transition-all transform shadow-[2px_2px_0_0_#000] ${
+            className={`font-typewriter text-sm px-4 py-2 border transition-all ${
               categoryFilter === cat 
-                ? 'bg-black text-white translate-y-1 shadow-none' 
-                : 'bg-white hover:bg-chalk-yellow hover:-translate-y-1'
+                ? 'bg-yellow-400 text-black border-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]' 
+                : 'bg-black/40 text-gray-300 border-white/20 hover:border-yellow-400 hover:text-yellow-400'
             }`}
           >
             {cat}
@@ -109,13 +109,13 @@ export default function Blog() {
       {/* Posts List */}
       <div className="space-y-12">
         {loading ? (
-          <div className="text-center font-typewriter text-xl">Loading chaos...</div>
+          <div className="text-center font-typewriter text-xl text-yellow-400 opacity-60">Loading chaos...</div>
         ) : posts.length === 0 ? (
-          <div className="text-center font-kalam text-2xl text-gray-500 bg-white p-10 border border-dashed border-gray-400 transform rotate-1">
+          <div className="bg-[#fef08a] text-black shadow-xl p-10 text-center font-caveat text-2xl rotate-1">
             Nothing to see here yet. Come back when I'm having a breakdown.
           </div>
         ) : filteredPosts.length === 0 ? (
-          <div className="text-center font-kalam text-2xl text-gray-500 bg-white p-10 border border-dashed border-gray-400 transform rotate-1">
+          <div className="bg-[#fbcfe8] text-black shadow-xl p-10 text-center font-caveat text-2xl -rotate-1">
             No thoughts match '{searchQuery}'.
           </div>
         ) : (
@@ -125,37 +125,41 @@ export default function Blog() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="group relative bg-[#fdfbf7] p-6 md:p-8 border-t border-black/20"
+              className={`group p-8 hover:-translate-y-1 transition-transform relative cursor-pointer block shadow-xl ${['bg-[#fef08a]', 'bg-[#fbcfe8]', 'bg-[#bae6fd]', 'bg-[#a7f3d0]'][i % 4]} text-black`}
+              style={{ transform: `rotate(${i % 2 === 0 ? '-1deg' : '1.5deg'})` }}
             >
-               {/* Decorative tape */}
-               <div className="absolute top-0 right-10 w-16 h-6 bg-red-200/50 mask-tape rotate-6" />
-
-               <div className="flex flex-col md:flex-row gap-4 items-start md:items-baseline mb-4">
-                 <Link to={`/blog/${post.id}`} className="flex-grow">
-                   <h2 className="font-sans font-bold text-3xl group-hover:text-crayon-red transition-colors decoration-2 decoration-wavy group-hover:underline underline-offset-4">
+               <Link to={`/blog/${post.id}`} className="block absolute inset-0 z-10" />
+               <div className="relative z-0 pl-2">
+                 <div className="flex flex-col sm:flex-row justify-between sm:items-end mb-4 gap-2">
+                   <h2 className="font-caveat font-bold text-3xl md:text-4xl group-hover:text-red-700 transition-colors leading-tight">
                      {post.title}
                    </h2>
-                 </Link>
-                 <div className="font-typewriter text-sm flex gap-3 text-gray-500 whitespace-nowrap">
-                   <span>{post.publishedAt ? format(formatFirestoreTime(post.publishedAt), 'MMM dd, yyyy') : 'Recently'}</span>
-                   <span>·</span>
-                   <span>{post.readTime}</span>
+                   <div className="font-typewriter text-xs sm:text-sm flex gap-3 text-gray-500 whitespace-nowrap opacity-70">
+                     <span>{post.publishedAt ? format(formatFirestoreTime(post.publishedAt), 'MMM dd, yyyy') : 'Recently'}</span>
+                     <span>·</span>
+                     <span>{post.readTime}</span>
+                   </div>
                  </div>
-               </div>
 
-               <p className="font-serif text-xl text-gray-800 leading-relaxed mb-6">
-                 {post.excerpt}
-               </p>
+                 <p className="font-caveat text-xl sm:text-2xl text-gray-800 leading-relaxed mb-6 opacity-90">
+                   {post.excerpt}
+                 </p>
 
-               <div className="flex flex-wrap gap-2 items-center">
-                 <span className="font-typewriter text-xs uppercase tracking-wider bg-black text-white px-2 py-1">
-                   {post.category}
-                 </span>
-                 {post.mood && (
-                   <span className="font-caveat text-xl text-purple-pen ml-2">
-                     mood: {post.mood}
+                 <div className="flex justify-between items-center mt-6 border-t border-black/10 pt-4">
+                   <div className="flex flex-wrap gap-2 items-center z-20">
+                     <span className="font-typewriter text-xs uppercase tracking-wider bg-black text-white px-2 py-1">
+                       {post.category}
+                     </span>
+                     {post.mood && (
+                       <span className="font-typewriter text-xs opacity-70 bg-black/5 px-2 py-1 rounded ml-2">
+                         mood: {post.mood}
+                       </span>
+                     )}
+                   </div>
+                   <span className="inline-block font-editors-note italic text-xl text-black border-2 border-black px-6 py-2 group-hover:bg-black group-hover:text-yellow-400 transition-colors shadow-[2px_2px_0_0_rgba(0,0,0,1)]">
+                     Read More &rarr;
                    </span>
-                 )}
+                 </div>
                </div>
             </motion.div>
           ))

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Permanent+Marker&family=Special+Elite&family=Inter:wght@400..700&family=Kalam:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Permanent+Marker&family=Special+Elite&family=Inter:wght@400..700&family=Kalam:wght@400;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
@@ -8,6 +8,7 @@
   --font-typewriter: "Special Elite", monospace;
   --font-sans: "Inter", sans-serif;
   --font-kalam: "Kalam", cursive;
+  --font-editors-note: "Playfair Display", serif;
 
   /* Color Palette */
   --color-paper: #f4efe6;
@@ -25,12 +26,8 @@
 }
 
 body {
-  background-color: var(--color-paper);
-  color: var(--color-ink);
-  background-image: 
-    linear-gradient(90deg, rgba(200, 200, 200, 0.2) 1px, transparent 1px),
-    linear-gradient(rgba(200, 200, 200, 0.2) 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-color: #0b0f19;
+  color: #e2e8f0;
 }
 
 ::selection {
@@ -38,14 +35,71 @@ body {
   color: var(--color-ink);
 }
 
-.scrapbook-texture {
-  background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.05" /></svg>');
+.night-sky-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -2;
+  background-color: #0b0f19;
+  background-image: 
+    radial-gradient(1px 1px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 160px 120px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 200px 90px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(2.5px 2.5px at 250px 180px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 300px 50px, #ffffff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 350px 350px;
+  /* background-image: url('/assets/background.jpg'); */ /* Uncomment to use custom image */
+  background-position: center;
+  background-attachment: fixed;
 }
 
-/* Tape effect */
-.mask-tape {
-  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg width="100" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M0 0 L10 5 L20 0 L30 5 L40 0 L50 4 L60 0 L70 3 L80 0 L90 5 L100 0 L100 20 L90 15 L80 20 L70 17 L60 20 L50 16 L40 20 L30 15 L20 20 L10 15 L0 20 Z"/></svg>');
-  mask-image: url('data:image/svg+xml;utf8,<svg width="100" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M0 0 L10 5 L20 0 L30 5 L40 0 L50 4 L60 0 L70 3 L80 0 L90 5 L100 0 L100 20 L90 15 L80 20 L70 17 L60 20 L50 16 L40 20 L30 15 L20 20 L10 15 L0 20 Z"/></svg>');
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
+.film-grain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  opacity: 0.15;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.dark-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.torn-paper {
+  background-color: #fdfbf7;
+  color: #1a1a1a;
+  position: relative;
+  border-radius: 2px;
+  background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.03" /></svg>');
+  box-shadow: 2px 4px 10px rgba(0,0,0,0.5);
+  clip-path: polygon(1% 0, 98% 2%, 100% 98%, 2% 100%, 0 45%);
+}
+
+.diary-page {
+  background-color: #fafafa;
+  color: #333333;
+  background-image: 
+    linear-gradient(90deg, transparent 50px, rgba(239, 68, 68, 0.4) 50px, rgba(239, 68, 68, 0.4) 52px, transparent 52px),
+    repeating-linear-gradient(transparent, transparent 31px, rgba(147, 197, 253, 0.5) 31px, rgba(147, 197, 253, 0.5) 32px);
+  background-size: 100% 100%, 100% 32px;
+  line-height: 32px;
+  box-shadow: 2px 4px 15px rgba(0,0,0,0.15);
+  border-radius: 2px;
+  padding-left: 1rem;
 }

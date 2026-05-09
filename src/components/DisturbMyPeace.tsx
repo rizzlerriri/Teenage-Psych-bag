@@ -17,15 +17,21 @@ const THOUGHTS = [
 ];
 
 export default function DisturbMyPeace() {
-  const [thought, setThought] = useState<string | null>(null);
+  const [thought, setThought] = useState<{text: string, x: number, y: number, r: number} | null>(null);
 
   const handleClick = () => {
     let nextThought = THOUGHTS[Math.floor(Math.random() * THOUGHTS.length)];
     // Ensure we don't pick the same thought twice in a row, if possible
-    while (nextThought === thought && THOUGHTS.length > 1) {
+    while (thought && nextThought === thought.text && THOUGHTS.length > 1) {
         nextThought = THOUGHTS[Math.floor(Math.random() * THOUGHTS.length)];
     }
-    setThought(nextThought);
+    
+    // random positions (avoid edges roughly)
+    const randomX = Math.floor(10 + Math.random() * 60);
+    const randomY = Math.floor(10 + Math.random() * 60);
+    const randomRot = Math.random() * 20 - 10;
+    
+    setThought({ text: nextThought, x: randomX, y: randomY, r: randomRot });
     
     // Auto-dismiss after 5 seconds
     setTimeout(() => {
@@ -37,7 +43,7 @@ export default function DisturbMyPeace() {
     <>
       <button 
         onClick={handleClick}
-        className="fixed bottom-4 md:bottom-8 right-4 md:right-8 z-50 font-typewriter text-sm sm:text-base bg-electric-blue text-white px-4 py-2 rotate-2 hover:rotate-0 hover:bg-crayon-red hover:text-white transition-all shadow-[4px_4px_0_0_#bb00ff]"
+        className="fixed bottom-4 md:bottom-8 right-4 md:right-8 z-50 font-editors-note italic text-lg sm:text-xl bg-black/60 border border-white/20 backdrop-blur text-yellow-400 px-4 py-2 hover:bg-yellow-400 hover:text-black transition-all shadow-[0_0_15px_rgba(250,204,21,0.2)]"
       >
         [ DISTURB MY PEACE ]
       </button>
@@ -45,16 +51,17 @@ export default function DisturbMyPeace() {
       <AnimatePresence>
         {thought && (
           <motion.div
-            key={thought} // use thought as key to force re-render if another is clicked immediately
-            initial={{ opacity: 0, y: 50, scale: 0.9, rotate: -5 }}
-            animate={{ opacity: 1, y: 0, scale: 1, rotate: Math.random() * 10 - 5 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-chalk-yellow p-6 md:p-10 shadow-[8px_8px_0_0_rgba(0,0,0,1)] border-2 border-black max-w-sm w-[90%] md:w-full pointer-events-none"
+            key={thought.text}
+            initial={{ opacity: 0, scale: 0.8, rotate: thought.r - 10 }}
+            animate={{ opacity: 1, scale: 1, rotate: thought.r }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            style={{ top: `${thought.y}%`, left: `${thought.x}%` }}
+            className="fixed z-50 bg-[#fef08a] p-6 shadow-[4px_4px_15px_rgba(0,0,0,0.5)] max-w-xs w-64 pointer-events-none"
           >
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-red-500 shadow-md flex items-center justify-center">
-              <div className="w-4 h-4 rounded-full bg-red-800 shadow-inner" />
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-red-800 shadow-md flex items-center justify-center opacity-90">
+              <div className="w-3 h-3 rounded-full bg-black/40 shadow-inner" />
             </div>
-            <p className="font-kalam text-2xl text-center leading-relaxed mt-2 text-ink">{thought}</p>
+            <p className="font-caveat text-2xl text-center leading-relaxed mt-2 text-black">{thought.text}</p>
           </motion.div>
         )}
       </AnimatePresence>

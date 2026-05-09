@@ -120,29 +120,20 @@ export default function BlogPost() {
       <motion.div 
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="bg-white p-8 md:p-12 shadow-[12px_12px_0_0_rgba(0,0,0,0.1)] border-2 border-black relative"
+        className="diary-page pt-8 pb-10 relative mt-4 shadow-2xl max-w-2xl mx-auto"
       >
-        {/* Notebook bindings */}
-        <div className="absolute left-0 top-0 bottom-0 w-8 border-r-2 border-red-300 md:flex flex-col justify-evenly items-center hidden">
-          {[...Array(6)].map((_, i) => (
-             <div key={i} className="w-4 h-4 rounded-full bg-paper border border-black shadow-inner relative left-[-8px]">
-               <div className="absolute top-1/2 left-0 w-16 h-0.5 bg-black/40 rotate-[10deg] -translate-y-1/2 -z-10" />
-             </div>
-          ))}
-        </div>
-
-        <div className="md:pl-10">
-          <header className="mb-10 text-center relative">
-             <h1 className="font-marker text-4xl md:text-5xl lg:text-6xl text-ink leading-tight mb-6 transform -rotate-1">
+        <div className="relative z-10 w-full pl-16 md:pl-20 pr-8">
+          <header className="mb-8 text-center relative">
+             <h1 className="font-caveat font-bold text-4xl md:text-5xl text-black" style={{ lineHeight: '32px' }}>
                {post.title}
              </h1>
              
-             <div className="flex flex-wrap justify-center gap-4 font-typewriter text-sm opacity-80 border-y border-dashed border-gray-300 py-3">
+             <div className="flex flex-wrap justify-center gap-4 font-typewriter text-xs opacity-70 mt-8 mb-8" style={{ lineHeight: '32px' }}>
                <span>{post.publishedAt ? format(formatFirestoreTime(post.publishedAt), 'MMMM dd, yyyy') : 'Recently'}</span>
                <span>//</span>
                <span>{post.readTime} read</span>
                <span>//</span>
-               <span className="bg-chalk-yellow px-1">mood: {post.mood}</span>
+               <span className="bg-yellow-200 px-1 text-black">mood: {post.mood}</span>
              </div>
           </header>
 
@@ -150,7 +141,7 @@ export default function BlogPost() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="prose prose-lg prose-headings:font-marker prose-h2:text-3xl prose-h3:text-2xl prose-p:font-kalam prose-p:text-xl prose-p:text-gray-800 prose-p:leading-relaxed prose-li:font-kalam prose-li:text-xl prose-li:text-gray-800 prose-a:text-electric-blue prose-a:decoration-wavy max-w-none"
+            className="prose prose-lg prose-headings:font-caveat prose-headings:my-8 prose-h2:text-4xl prose-h3:text-3xl prose-p:font-caveat prose-p:text-2xl prose-p:text-gray-900 prose-p:leading-[32px] prose-p:my-8 prose-li:font-caveat prose-li:text-2xl prose-li:leading-[32px] prose-li:text-gray-900 prose-a:text-blue-800 prose-a:underline max-w-none"
           >
             <Markdown remarkPlugins={[remarkGfm]}>{post.content}</Markdown>
           </motion.div>
